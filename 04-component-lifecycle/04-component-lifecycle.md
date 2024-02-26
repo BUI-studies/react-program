@@ -19,6 +19,7 @@
   - [useEffect зі змінними в масиві залежностей](#useeffect-зі-змінними-в-масиві-залежностей)
   - [return value функції переданої в useEffect](#return-value-функції-переданої-в-useeffect)
   - [а як тоді імітувати `shouldComponentUpdate`?](#а-як-тоді-імітувати-shouldcomponentupdate)
+- [ErrorBoundary](#errorboundary)
 
 Перше що треба зрозуміти про життєвий цикл, це те, що пояснювати його на класах набагато простіше. Якими б застарілими та повільними класові компоненти не були, кожен з них мав усі потрібні методи життєвого циклу, роботу яких перевірити було максимально просто.
 
@@ -251,3 +252,47 @@ const MyComponent = props => {
 ```
 
 також, для схожого ефекту можна використати `useMemo` або `useCallback`, але це вже зовсім інша історія.
+
+# [ErrorBoundary](https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary)
+
+а це штука, яку можна створити лише класовим компонентом, бо тільки він має метод `componentDidCatch`.
+
+служить добру службу по красівому відображенню помилок в додатку, які користувачеві все ж мають бути показані.
+
+```jsx
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false }
+  }
+
+  static getDerivedStateFromError(error) {
+    // оновлюємо стейт для того, щоб потім відрендерити UI з помилкою
+    return { hasError: true }
+  }
+
+  componentDidCatch(error, info) {
+    // Example "componentStack":
+    //   in ComponentThatThrows (created by App)
+    //   in ErrorBoundary (created by App)
+    //   in div (created by App)
+    //   in App
+    logErrorToMyService(error, info.componentStack) // це на віпадок, якщо у тебе є підключений сервіс із логуванням помилок
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // це може бути будь яка розмітка зі стилями на твій смак
+      return <h1>Something went wrong.</h1>
+    }
+
+    return this.props.children
+  }
+
+  logErrorToMyService() {
+    // тут можна відправити помилку на сервер
+  }
+}
+```
+
+на практиці зустрічається, але зазвичай або автогенерується бандлером, або уже написаний до тебе. проте розуміти шо в ньому відбувається та чому потрібно, аби не ввести себе в оману шо магія існує.
