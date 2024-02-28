@@ -15,7 +15,7 @@
 
 - [`prop-types`](https://www.npmjs.com/package/prop-types) біблотеку, якщо ми говоримо про написання react-проєктів на VanillaJS.
 
-  [ліба](https://www.npmjs.com/package/prop-types) - містить в собі набір валідаційниз функцій, якими можна досить зручно користуватись.
+  [ліба](https://www.npmjs.com/package/prop-types) - містить в собі набір валідаційних функцій, якими можна досить зручно користуватись.
 
   ```jsx
   const ListItem = ({ title, description }) => {
@@ -28,7 +28,7 @@
   }
 
   ListItem.propTypes = {
-    title: PropTypes.string.isRequired, //поверне функцію, якою буде перевірятись на валідність одноімення пропса
+    title: PropTypes.string.isRequired, //поверне функцію, якою буде перевірятись на валідність одноіменна пропса
     description: PropTypes.node, //перевірятиме щоб пропса була дійсно реакт-нодою
   }
   ```
