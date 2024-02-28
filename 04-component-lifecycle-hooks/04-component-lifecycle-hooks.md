@@ -226,6 +226,8 @@ const useLocalStorage = (key, defaultValue) => {
 
 ### useWindowSize
 
+час від часу стає в нагоді, коли до прикладу на мобілках та десктопах треба відрендерити різні компоненти
+
 ```tsx
 const useWindowSize = () => {
   const [windowSize, setWindowSize] = useState({
