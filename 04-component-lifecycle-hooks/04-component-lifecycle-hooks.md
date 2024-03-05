@@ -187,7 +187,7 @@ class MyComponent extends Component {
 
 ## так все ж таки шо роблять хуки?
 
-вони як плагіни у VSCode - додають до твого компоенту якісь супер-сили, які до цього були неможливі. як от - використання стейту, доступ до параметрів шляху з адресної строки браузеру, тощо.
+вони як плагіни у VSCode - додають до твого компоненту якісь супер-сили, які до цього були неможливі. як от - використання стейту, доступ до параметрів шляху з адресної строки браузеру, тощо.
 
 ## кастомні хуки
 
@@ -195,34 +195,34 @@ class MyComponent extends Component {
 
 ### useLocalStorage
 
-яскравим і водночас корисним прикладом для мене є хук `useLocalStorage`, яким я особисто досить часто користуюсь
+наприклад можна написати нескладний хук для роботи з `localStorage`:
 
 ```tsx
 const useLocalStorage = (key, defaultValue) => {
-  const [localStorageValue, setLocalStorageValue] = useState(() => {
-    try {
-      const value = localStorage.getItem(key)
-
-      if (!value) {
-        localStorage.setItem(key, JSON.stringify(defaultValue))
-        return defaultValue
-      } else {
-        return JSON.parse(value)
-      }
-    } catch (error) {
-      localStorage.setItem(key, JSON.stringify(defaultValue))
-      return defaultValue
-    }
-  })
+  const storageValue = localStorage.getItem(key)
+  const [localStorageValue, setLocalStorageValue] = useState(
+    JSON.parse(storageValue) || defaultValue
+  )
 
   const changeValue = (newValue) => {
     localStorage.setItem(key, JSON.stringify(newValue))
-    setLocalStorageValue(newValue)
+
+    setLocalStorageValue(() => {
+      if (typeof newValue === "object") {
+        return { ...newValue } //щоб точно створити новий обʼєкт з новим посиланням на нього. інакше реакт не побачить зміну
+      } else {
+        return newValue
+      }
+    })
   }
 
   return [localStorageValue, changeValue]
 }
 ```
+
+тепер зміна ключа в `localStorage` зпричинятиме і зміну стейту компонента, який використовує хук, а значить і перерндерить компонет без додаткових втручань.
+
+тут є куди все покращувати, бо, до прикладу робота з обʼєктами
 
 ### useWindowSize
 
@@ -253,8 +253,6 @@ const useWindowSize = () => {
   return windowSize
 }
 ```
-
-як бачиш, користуватись `localStorage` з цим хуком стає зручніше, бо тепер зміна ключа в `localStorage` зпричинятиме і зміну стейту компонента, який використовує хук, а значить і перерндерить компонет без додаткових втручань.
 
 # А як у функціональних компонентах?
 
